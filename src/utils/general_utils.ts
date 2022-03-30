@@ -1,5 +1,5 @@
 export const internalProperties = ['pID', 'pName', 'pStart', 'pEnd', 'pClass', 'pLink', 'pMile', 'pRes', 'pComp', 'pGroup', 'pParent',
-  'pOpen', 'pDepend', 'pCaption', 'pNotes', 'pGantt', 'pCost', 'pPlanStart', 'pPlanEnd'];
+  'pOpen', 'pDepend', 'pCaption', 'pNotes', 'pGantt', 'pCost', 'pPlanStart', 'pPlanEnd', 'pPlanClass'];
 
 export const internalPropertiesLang = {
   'pID': 'id',
@@ -19,7 +19,8 @@ export const internalPropertiesLang = {
   'pNotes': 'notes',
   'pCost': 'cost',
   'pPlanStart': 'planstartdate',
-  'pPlanEnd': 'planenddate'
+  'pPlanEnd': 'planenddate',
+  'pPlanClass': 'planclass'
 };
 
 export const findObj = function (theObj, theDoc = null) {
@@ -81,7 +82,7 @@ export const benchMark = function (pItem) {
 export const getScrollPositions = function () {
   let vScrollLeft = window.pageXOffset;
   let vScrollTop = window.pageYOffset;
-  if (!('pageXOffset' in window))	// Internet Explorer before version 9
+  if (!('pageXOffset' in window)) // Internet Explorer before version 9
   {
     let vZoomFactor = getZoomFactor();
     vScrollLeft = Math.round(document.documentElement.scrollLeft / vZoomFactor);
@@ -182,7 +183,7 @@ export const getOffset = function (pStartDate, pEndDate, pColWidth, pFormat, pSh
 
 export const isIE = function () {
   if (typeof document.all != 'undefined') {
-    if ('pageXOffset' in window) return false;	// give IE9 and above the benefit of the doubt!
+    if ('pageXOffset' in window) return false;  // give IE9 and above the benefit of the doubt!
     else return true;
   }
   else return false;
@@ -342,14 +343,14 @@ export const updateFlyingObj = function (e, pGanttChartObj, pTimer) {
   let vScrollPos = getScrollPositions();
 
   /* Code for positioned right of the mouse by default*/
-	/*
-	if (vMouseX+vCurRightBuf+pGanttChartObj.vTool.offsetWidth>vViewportX)
-	{
-		if (vMouseX-vCurLeftBuf-pGanttChartObj.vTool.offsetWidth<0) vNewX=vScrollPos.x;
-		else vNewX=vMouseX+vScrollPos.x-vCurLeftBuf-pGanttChartObj.vTool.offsetWidth;
-	}
-	else vNewX=vMouseX+vScrollPos.x+vCurRightBuf;
-	*/
+  /*
+  if (vMouseX+vCurRightBuf+pGanttChartObj.vTool.offsetWidth>vViewportX)
+  {
+    if (vMouseX-vCurLeftBuf-pGanttChartObj.vTool.offsetWidth<0) vNewX=vScrollPos.x;
+    else vNewX=vMouseX+vScrollPos.x-vCurLeftBuf-pGanttChartObj.vTool.offsetWidth;
+  }
+  else vNewX=vMouseX+vScrollPos.x+vCurRightBuf;
+  */
 
   /* Code for positioned left of the mouse by default */
   if (vMouseX - vCurLeftBuf - pGanttChartObj.vTool.offsetWidth < 0) {
@@ -366,14 +367,14 @@ export const updateFlyingObj = function (e, pGanttChartObj, pTimer) {
   else vNewY = vMouseY + vScrollPos.y + vCurBotBuf;
 
   /* Code for positioned above the mouse by default */
-	/*
-	if (vMouseY-vCurTopBuf-pGanttChartObj.vTool.offsetHeight<0)
-	{
-		if (vMouseY+vCurBotBuf+pGanttChartObj.vTool.offsetHeight>vViewportY) vNewY=vScrollPos.y;
-		else vNewY=vMouseY+vScrollPos.y+vCurBotBuf;
-	}
-	else vNewY=vMouseY+vScrollPos.y-vCurTopBuf-pGanttChartObj.vTool.offsetHeight;
-	*/
+  /*
+  if (vMouseY-vCurTopBuf-pGanttChartObj.vTool.offsetHeight<0)
+  {
+    if (vMouseY+vCurBotBuf+pGanttChartObj.vTool.offsetHeight>vViewportY) vNewY=vScrollPos.y;
+    else vNewY=vMouseY+vScrollPos.y+vCurBotBuf;
+  }
+  else vNewY=vMouseY+vScrollPos.y-vCurTopBuf-pGanttChartObj.vTool.offsetHeight;
+  */
   let outViewport = Math.abs(vOldX - vNewX) > screenX || Math.abs(vOldY - vNewY) > screenY
 
   if (pGanttChartObj.getUseMove() && !outViewport) {
@@ -444,7 +445,7 @@ export const makeRequestOldBrowsers = (pFile, vDebug = false) => {
     let xhttp;
     if ((<any>window).XMLHttpRequest) {
       xhttp = new XMLHttpRequest();
-    } else {	// IE 5/6
+    } else {  // IE 5/6
       xhttp = new (<any>window).ActiveXObject('Microsoft.XMLHTTP');
     }
 
