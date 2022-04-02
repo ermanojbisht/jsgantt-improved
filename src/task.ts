@@ -72,12 +72,14 @@ export const TaskItemObject = function (object) {
     object.pDuration,
     object.pBarText,
     object,
-    object.pPlanClass
+    object.pPlanClass,
+    object.pBStart,
+    object.pBEnd
   );
 }
 
 export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen,
-  pDepend, pCaption, pNotes, pGantt, pCost = null, pPlanStart = null, pPlanEnd = null, pDuration = null, pBarText = null, pDataObject = null, pPlanClass = null) {
+  pDepend, pCaption, pNotes, pGantt, pCost = null, pPlanStart = null, pPlanEnd = null, pDuration = null, pBarText = null, pDataObject = null, pPlanClass = null,pBStart=null,pBEnd=null) {
   let vGantt = pGantt ? pGantt : this;
   let _id = document.createTextNode(pID).data;
   let vID = hashKey(document.createTextNode(pID).data);
@@ -86,10 +88,14 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
   let vEnd = null;
   let vPlanStart = null;
   let vPlanEnd = null;
+  let pBStart = null;
+  let pBEnd = null;
   let vGroupMinStart = null;
   let vGroupMinEnd = null;
   let vGroupMinPlanStart = null;
   let vGroupMinPlanEnd = null;
+  let vBGroupMinStart = null;
+  let vBGroupMinEnd = null;
   let vClass = document.createTextNode(pClass).data;
   let vPlanClass = document.createTextNode(pPlanClass).data;
   let vLink = document.createTextNode(pLink).data;
@@ -121,6 +127,7 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
   let vSortIdx = 0;
   let vToDelete = false;
   let x1, y1, x2, y2;
+  let xB1, yB1, xB2, yB2;
   let vNotes;
   let vParItem = null;
   let vCellDiv = null;
@@ -157,6 +164,19 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
     vPlanEnd = (pPlanEnd instanceof Date) ? pPlanEnd : parseDateStr(document.createTextNode(pPlanEnd).data, vGantt.getDateInputFormat());
     vGroupMinPlanEnd = vPlanEnd;
   }
+
+  if (pBStart != null && pBStart != '') {
+    vBStart = (pBStart instanceof Date) ? pBStart : parseDateStr(document.createTextNode(pBStart).data, vGantt.getDateInputFormat());
+    vBGroupMinStart = vBStart;
+  }
+
+  if (pBEnd != null && pBEnd != '') {
+    vBEnd = (pBEnd instanceof Date) ? pBEnd : parseDateStr(document.createTextNode(pBEnd).data, vGantt.getDateInputFormat());
+    vBGroupMinEnd = vBEnd;
+  }
+
+
+
 
   if (pDepend != null) {
     let vDependStr = pDepend + '';
@@ -227,11 +247,15 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
   this.getPlanStart = function () { return vPlanStart ? vPlanStart : vStart; };
   this.getPlanClass = function () { return vPlanClass && vPlanClass !== "null" ? vPlanClass : vClass; };
   this.getPlanEnd = function () { return vPlanEnd ? vPlanEnd : vEnd; };
+  this.getBStart=function(){return vBStart ? vBStart : vStart; };
+  this.getBEnd=function(){return vBEnd ? vBEnd : vEnd; };
   this.getCost = function () { return vCost; };
   this.getGroupMinStart = function () { return vGroupMinStart; };
   this.getGroupMinEnd = function () { return vGroupMinEnd; };
   this.getGroupMinPlanStart = function () { return vGroupMinPlanStart; };
   this.getGroupMinPlanEnd = function () { return vGroupMinPlanEnd; };
+  this.getBGroupMinStart=function(){return vBGroupMinStart;};
+  this.getBGroupMinEnd=function(){return vBGroupMinEnd;};
   this.getClass = function () { return vClass; };
   this.getLink = function () { return vLink; };
   this.getMile = function () { return vMile; };
@@ -301,11 +325,17 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
   this.getStartY = function () { return y1; };
   this.getEndX = function () { return x2; };
   this.getEndY = function () { return y2; };
+  this.getBStartX=function(){return xB1;};
+  this.getBStartY=function(){return yB1;};
+  this.getBEndX=function(){return xB2;};
+  this.getBEndY=function(){return yB2;};
   this.getVisible = function () { return vVisible; };
   this.getParItem = function () { return vParItem; };
   this.getCellDiv = function () { return vCellDiv; };
   this.getBarDiv = function () { return vBarDiv; };
   this.getTaskDiv = function () { return vTaskDiv; };
+  this.getBBarDiv=function(){return vBBarDiv;};
+  this.getBTaskDiv=function(){return vBTaskDiv;};
   this.getPlanTaskDiv = function () { return vPlanTaskDiv; };
   this.getChildRow = function () { return vChildRow; };
   this.getListChildRow = function () { return vListChildRow; };
@@ -342,12 +372,23 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
     if (pPlanStart instanceof Date) vPlanStart = pPlanStart;
     else vPlanStart = new Date(pPlanStart);
   };
+
   this.setPlanEnd = function (pPlanEnd) {
     if (pPlanEnd instanceof Date) vPlanEnd = pPlanEnd;
     else vPlanEnd = new Date(pPlanEnd);
   };
+  this.setBStart=function(pBStart) {
+    if(pBStart instanceof Date) vBStart=pBStart;
+    else pBStart = new Date(pBStart);
+  };
+  this.setBEnd=function(pBEnd) {
+    if(pBEnd instanceof Date) vBEnd=pBEnd;
+    else pBEnd = new Date(pBEnd);
+  };
   this.setGroupMinStart = function (pStart) { if (pStart instanceof Date) vGroupMinStart = pStart; };
   this.setGroupMinEnd = function (pEnd) { if (pEnd instanceof Date) vGroupMinEnd = pEnd; };
+  this.setBGroupMinStart = function (pBStart) { if (pBStart instanceof Date) vBGroupMinStart = pBStart; };
+  this.setBGroupMinEnd = function (pBEnd) { if (pBEnd instanceof Date) vBGroupMinEnd = pBEnd; };
   this.setLevel = function (pLevel) { vLevel = parseInt(document.createTextNode(pLevel).data); };
   this.setNumKid = function (pNumKid) { vNumKid = parseInt(document.createTextNode(pNumKid).data); };
   this.setWeight = function (pWeight) { vWeight = parseInt(document.createTextNode(pWeight).data); };
@@ -359,6 +400,10 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
   this.setStartY = function (pY) { y1 = parseInt(document.createTextNode(pY).data); };
   this.setEndX = function (pX) { x2 = parseInt(document.createTextNode(pX).data); };
   this.setEndY = function (pY) { y2 = parseInt(document.createTextNode(pY).data); };
+  this.setBStartX = function(pBX){xB1=parseInt(document.createTextNode(pBX).data);};
+  this.setBStartY = function(pBY){yB1=parseInt(document.createTextNode(pBY).data);};
+  this.setBEndX = function(pBX){xB2=parseInt(document.createTextNode(pBX).data);};
+  this.setBEndY = function(pBY){yB2=parseInt(document.createTextNode(pBY).data);};
   this.setOpen = function (pOpen) { vOpen = parseInt(document.createTextNode(pOpen).data); };
   this.setVisible = function (pVisible) { vVisible = parseInt(document.createTextNode(pVisible).data); };
   this.setSortIdx = function (pSortIdx) { vSortIdx = parseInt(document.createTextNode(pSortIdx).data); };
@@ -378,6 +423,10 @@ export const TaskItem = function (pID, pName, pStart, pEnd, pClass, pLink, pMile
 
   this.setBarDiv = function (pDiv) { if (typeof HTMLDivElement !== 'function' || pDiv instanceof HTMLDivElement) vBarDiv = pDiv; };
   this.setTaskDiv = function (pDiv) { if (typeof HTMLDivElement !== 'function' || pDiv instanceof HTMLDivElement) vTaskDiv = pDiv; };
+
+  this.setBBarDiv=function(pBDiv){if(typeof HTMLDivElement !== 'function' || pBDiv instanceof HTMLDivElement)vBBarDiv=pBDiv;};
+  this.setBTaskDiv=function(pBDiv){if(typeof HTMLDivElement !== 'function' || pBDiv instanceof HTMLDivElement)vBTaskDiv=pBDiv;};
+
   this.setPlanTaskDiv = function (pDiv) { if (typeof HTMLDivElement !== 'function' || pDiv instanceof HTMLDivElement) vPlanTaskDiv = pDiv; };
   this.setChildRow = function (pRow) { if (typeof HTMLTableRowElement !== 'function' || pRow instanceof HTMLTableRowElement) vChildRow = pRow; };
   this.setListChildRow = function (pRow) { if (typeof HTMLTableRowElement !== 'function' || pRow instanceof HTMLTableRowElement) vListChildRow = pRow; };
